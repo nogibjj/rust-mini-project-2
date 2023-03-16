@@ -43,4 +43,37 @@ fn main() {
                 .short("k")
                 .long("key")
                 .value_name("KEY")
-                .help("
+                .help("Specifies the 32-byte key (in Base64 format) to use for encryption/decryption")
+                .takes_value(true)
+                .required(true),
+        )
+        .get_matches();
+
+    let input_file = matches.value_of("encrypt").or_else(|| matches.value_of("decrypt")).unwrap();
+    let output_file = matches.value_of("output").unwrap();
+    let key_base64 = matches.value_of("key").unwrap();
+
+    let key = base64::decode(key_base64).expect("Invalid key format");
+    if key.len() != 32 {
+        panic!("Key must be exactly 32 bytes long");
+    }
+
+    if let Some(encrypt_file) = matches.value_of("encrypt") {
+        encrypt_file(&encrypt_file, &output_file, &key);
+    } else if let Some(decrypt_file) = matches.value_of("decrypt") {
+        decrypt_file(&decrypt_file, &output_file, &key);
+    }
+}
+
+fn encrypt_file(input_file: &str, output_file: &str, key: &[u8]) {
+    let mut file = File::open(input_file).expect("Unable to open input file");
+    let mut data = Vec::new();
+    file.read_to_end(&mut data).expect("Unable to read input file");
+
+    let iv = rand::thread_rng().gen::<[u8; 16]>();
+    let cipher = Aes256Cbc::new_from_slices(key, &iv).unwrap();
+    let encrypted_data = cipher.encrypt_vec(&data);
+
+    let mut file = File::create(output_file).expect("Unable to create output file");
+    file.write_all(&iv).expect("Unable to write IV to output file");
+   
