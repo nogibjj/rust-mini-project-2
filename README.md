@@ -2,7 +2,7 @@ Title: Basic File Encryption Utility
 
 Description: This mini project is a simple command-line interface (CLI) application that provides basic file encryption and decryption using a symmetric-key algorithm. A basic file encryption utility that supports encryption and decryption using the AES256-CBC mode with PKCS7 padding. You can use it by providing the input file, output
 
-## build
+## Build
 ```
 $ cargo build --release
 $ ./target/release/basic_file_encryption --help
