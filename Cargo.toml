@@ -1,6 +1,5 @@
 [dependencies]
-clap = "3.0"
+structopt = "0.3"
 aes = "0.7"
 block-modes = "0.8"
-base64 = "0.13"
-rand = "0.8"
+hex = "0.4"
